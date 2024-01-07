@@ -26,6 +26,7 @@ import MessageEditerScreen from './src/MessageEditerScreen.js';
 import SettingsScreen from './src/SettingsScreen';
 import QRScaner from './src/QRScaner';
 import AddClassPage from './src/AddClassPage';
+import SelectClassPage from './src/SelectClassPage';
 
 // import SearchFriend from './src/SearchFriendPage';
 // import QRScaner from './src/QRScaner';
@@ -152,6 +153,11 @@ export default function Main() {
               name="AddClassPage"
               component={AddClassPage}
               options={{title: '添加班级'}}
+            />
+            <Stack.Screen
+              name="SelectClassPage"
+              component={SelectClassPage}
+              options={{title: '选择班级'}}
             />
           </Stack.Navigator>
         </NavigationContainer>

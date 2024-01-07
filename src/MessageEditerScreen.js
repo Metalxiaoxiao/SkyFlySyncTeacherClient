@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, TextInput, ActivityIndicator} from 'react-native';
+import { View, StyleSheet, TextInput, ActivityIndicator, Alert } from "react-native";
 import {
   FAB,
   Portal,
@@ -58,13 +58,7 @@ const MessageEditorScreen = () => {
 
       // Navigate back to the previous screen
 
-      showSnackbar({
-        message: '信息发送成功！',
-        actionLabel: '确定',
-        onActionPress: () => {
-          // Handle action press if needed
-        },
-      });
+      Alert.prompt("信息发送成功！")
       navigation.goBack();
     }, 2000); // Simulated delay of 2 seconds (adjust as needed)
   };

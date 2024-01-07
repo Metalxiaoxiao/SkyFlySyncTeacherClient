@@ -1,6 +1,13 @@
 import React, {useState} from 'react';
 import {FlatList, View, StyleSheet} from 'react-native';
-import {List, Checkbox, useTheme} from 'react-native-paper';
+import {
+  List,
+  Checkbox,
+  useTheme,
+  Divider,
+  Button,
+  FAB,
+} from 'react-native-paper';
 import {useSelector} from 'react-redux';
 
 const WhiteboardSelectionList = ({onWhiteboardSelect}) => {
@@ -21,20 +28,25 @@ const WhiteboardSelectionList = ({onWhiteboardSelect}) => {
   };
 
   const renderItem = ({item}) => (
-    <List.Item
-      title={item.userName}
-      description={item.online ? '在线' : '离线'}
-      left={() => (
-        <Checkbox.Android
-          status={selectedWhiteboards.includes(item) ? 'checked' : 'unchecked'}
-          onPress={() => handleWhiteboardPress(item)}
-          color={theme.colors.primary}
-        />
-      )}
-      right={() => (
-        <View style={item.online ? styles.onlineDot : styles.offlineDot} />
-      )}
-    />
+    <>
+      <List.Item
+        title={item.userName}
+        description={item.online ? '在线' : '离线'}
+        left={() => (
+          <Checkbox.Android
+            status={
+              selectedWhiteboards.includes(item) ? 'checked' : 'unchecked'
+            }
+            onPress={() => handleWhiteboardPress(item)}
+            color={theme.colors.primary}
+          />
+        )}
+        right={() => (
+          <View style={item.online ? styles.onlineDot : styles.offlineDot} />
+        )}
+      />
+      <Divider />
+    </>
   );
 
   return (
@@ -45,15 +57,6 @@ const WhiteboardSelectionList = ({onWhiteboardSelect}) => {
         renderItem={renderItem}
       />
       <View style={styles.footer}>
-        <Checkbox.Android
-          status={selectedWhiteboards.length > 0 ? 'checked' : 'unchecked'}
-          onPress={() =>
-            setSelectedWhiteboards(
-              selectedWhiteboards.length > 0 ? [] : whiteboardsData,
-            )
-          }
-          color={theme.colors.primary}
-        />
         <List.Item
           title="全选"
           onPress={() =>
@@ -61,12 +64,25 @@ const WhiteboardSelectionList = ({onWhiteboardSelect}) => {
               selectedWhiteboards.length > 0 ? [] : whiteboardsData,
             )
           }
+          left={()=>
+            <Checkbox.Android
+              status={selectedWhiteboards.length > 0 ? 'checked' : 'unchecked'}
+              onPress={() =>
+                setSelectedWhiteboards(
+                  selectedWhiteboards.length > 0 ? [] : whiteboardsData,
+                )
+              }
+              color={theme.colors.primary}
+            />
+          }
         />
-        <List.Item
-          title="确定"
+        <FAB
+          style={styles.sendButton}
+          icon="check-bold"
           onPress={() => onWhiteboardSelect(selectedWhiteboards)}
-          disabled={selectedWhiteboards.length === 0}
-        />
+          disabled={selectedWhiteboards.length === 0}>
+          >
+        </FAB>
       </View>
     </View>
   );

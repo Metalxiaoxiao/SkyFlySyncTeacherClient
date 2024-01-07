@@ -163,7 +163,8 @@ const HomeScreen = () => {
                 onPress: () => {
                   console.log('Pressed Send Message');
                   showCheckbox(true);
-                  naviagte.navigate('MessageEditerPage', {});
+                  naviagte.navigate('SelectClassPage', {});
+
                 },
               },
               {
