@@ -159,6 +159,7 @@ export default function Main() {
               component={SelectClassPage}
               options={{title: '选择班级'}}
             />
+            
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

@@ -28,7 +28,6 @@ const WhiteboardSelectionList = ({onWhiteboardSelect}) => {
   };
 
   const renderItem = ({item}) => (
-    <>
       <List.Item
         title={item.userName}
         description={item.online ? '在线' : '离线'}
@@ -45,8 +44,6 @@ const WhiteboardSelectionList = ({onWhiteboardSelect}) => {
           <View style={item.online ? styles.onlineDot : styles.offlineDot} />
         )}
       />
-      <Divider />
-    </>
   );
 
   return (

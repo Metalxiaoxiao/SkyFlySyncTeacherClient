@@ -15,6 +15,7 @@ import naviagte from './mods/RootNavigation';
 import {useIsFocused} from '@react-navigation/native';
 import {GlobalSnackbarProvider} from './mods/useGlobalSnackbar';
 import {useSelector} from 'react-redux';
+import { navigate } from "@react-navigation/routers/src/CommonActions";
 
 const HomeScreen = () => {
   const whiteboardsData = useSelector(
@@ -99,7 +100,6 @@ const HomeScreen = () => {
     );
   };
 
-
   const handleWhiteboardPress = whiteboard => {
     // Handle checkbox selection here
     if (selectedWhiteboards.length > 0) {
@@ -126,7 +126,7 @@ const HomeScreen = () => {
   const onStateChange = ({open}) => setState({open});
 
   const {open} = state;
-  const [isCheckboxShowed,showCheckbox] = useState(false);
+  const [isCheckboxShowed, showCheckbox] = useState(false);
   return (
     <GlobalSnackbarProvider>
       <View style={styles.container}>
@@ -155,32 +155,52 @@ const HomeScreen = () => {
               {
                 icon: 'file',
                 label: '传输文件',
-                onPress: () => console.log('Pressed Transfer Files'),
+                onPress: () => {
+                  showCheckbox(true);
+                  naviagte.navigate('SelectClassPage', {
+                    messageType: 'fileMessage',
+                  });
+                },
               },
               {
                 icon: 'message',
                 label: '发送消息',
                 onPress: () => {
-                  console.log('Pressed Send Message');
                   showCheckbox(true);
-                  naviagte.navigate('SelectClassPage', {});
-
+                  naviagte.navigate('SelectClassPage', {
+                    messageType: 'ordinaryMessage',
+                  });
                 },
               },
               {
                 icon: 'remote',
                 label: '远程控制',
-                onPress: () => console.log('Pressed Remote Control'),
+                onPress: () => {
+                  showCheckbox(true);
+                  naviagte.navigate('SelectClassPage', {
+                    messageType: 'controlMessage',
+                  });
+                },
               },
               {
                 icon: 'alarm',
                 label: '定时任务',
-                onPress: () => console.log('Pressed Schedule Task'),
+                onPress: () => {
+                  showCheckbox(true);
+                  naviagte.navigate('SelectClassPage', {
+                    messageType: 'timerMessage',
+                  });
+                },
               },
               {
                 icon: 'book',
                 label: '布置作业',
-                onPress: () => console.log('Pressed Assign Homework'),
+                onPress: () => {
+                  showCheckbox(true);
+                  naviagte.navigate('SelectClassPage', {
+                    messageType: 'homeworkMessage',
+                  });
+                },
               },
             ]}
             onStateChange={onStateChange}

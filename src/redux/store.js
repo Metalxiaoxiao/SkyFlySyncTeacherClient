@@ -56,7 +56,7 @@ WsListener.startListening({
             //解除loading状态
             if (listenerApi.getState().UserStateController.IsLogined) {
             } else {
-              listenerApi.dispatch(onLogin(action.payload));
+              listenerApi.dispatch(onLogin(action.payload.content));
               naviagte.reset({
                 index: 0,
                 routes: [
@@ -93,7 +93,7 @@ WsListener.startListening({
             onSendingMessage({
               command: 'getOnlineUser',
               content: {
-                id: Number(element),
+                userId: Number(element),
               },
             }),
           );

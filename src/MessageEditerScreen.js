@@ -1,23 +1,34 @@
 import React, {useState, useEffect} from 'react';
-import { View, StyleSheet, TextInput, ActivityIndicator, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
 import {
   FAB,
   Portal,
   Provider,
   ToggleButton,
   useTheme,
+  ProgressBar,
+  Text,
 } from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native'; // Import useNavigation hook
+import {useNavigation} from '@react-navigation/native';
 import {useGlobalSnackbar} from './mods/useGlobalSnackbar';
 import DocumentPicker from 'react-native-document-picker';
+import RNFS from 'react-native-fs';
 
 const MessageEditorScreen = () => {
   const theme = useTheme();
   const [message, setMessage] = useState('');
   const [attachment, setAttachment] = useState(null);
   const [isSending, setIsSending] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-  const navigation = useNavigation(); // Initialize the navigation hook
+  const navigation = useNavigation();
+  const showSnackbar = useGlobalSnackbar();
 
   const handleAttachmentPick = async () => {
     try {
@@ -28,6 +39,7 @@ const MessageEditorScreen = () => {
       console.log(result);
 
       setAttachment(result);
+      uploadFile(result);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         // User cancelled the picker
@@ -36,7 +48,46 @@ const MessageEditorScreen = () => {
       }
     }
   };
-  const showSnackbar = useGlobalSnackbar();
+
+  const uploadFile = async fileObj => {
+    try {
+      if (fileObj) {
+        var FileController = 'http://106.53.58.190:8900/upload'; // 接收上传文件的后台地址
+        // FormData 对象
+        var form = new FormData();
+        // var file = {
+        //   name: fileObj[0].name,
+        //   size: fileObj[0].size,
+        //   type: fileObj[0].type,
+        //   uri: fileObj[0].uri,
+        // };
+        console.log(fileObj);
+        form.append('file', fileObj[0]); // 文件对象
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', FileController, true);
+        xhr.upload.onprogress = function (ev) {
+          var process = ((100 * ev.loaded) / ev.total).toFixed(2);
+          console.log('进度：' + process + '%');
+          setUploadProgress(Number(process))
+          if (process == 100) {
+            Alert.alert('上传成功', '文件已成功上传');
+          }
+        };
+        xhr.send(form);
+      } else {
+        Alert.alert('请先选择文件');
+      }
+
+      console.log('File uploaded successfully');
+
+      // Handle the response as needed
+    } catch (error) {
+      console.error('Error uploading file:', error);
+
+      // Handle the error as needed
+    }
+  };
+
   const handleSend = () => {
     // Start sending
     setIsSending(true);
@@ -57,8 +108,7 @@ const MessageEditorScreen = () => {
       setAttachment(null);
 
       // Navigate back to the previous screen
-
-      Alert.prompt("信息发送成功！")
+      Alert.prompt('信息发送成功！');
       navigation.goBack();
     }, 2000); // Simulated delay of 2 seconds (adjust as needed)
   };
@@ -71,8 +121,6 @@ const MessageEditorScreen = () => {
   return (
     <Provider theme={theme}>
       <View style={styles.container}>
-        {/* Remove Appbar.Header */}
-
         <View style={styles.editorContainer}>
           <TextInput
             style={styles.input}
@@ -83,7 +131,6 @@ const MessageEditorScreen = () => {
           />
         </View>
 
-        {/* Add Toolbar */}
         <View style={styles.toolbar}>
           <ToggleButton.Row
             onValueChange={value => {
@@ -98,6 +145,16 @@ const MessageEditorScreen = () => {
             <ToggleButton icon="attachment" value="attach" />
           </ToggleButton.Row>
         </View>
+
+        {attachment && (
+          <View style={styles.attachmentCard}>
+            <Text>{attachment.name}</Text>
+            <ProgressBar
+              progress={uploadProgress / 100}
+              color={theme.colors.primary}
+            />
+          </View>
+        )}
 
         {isSending && (
           <View style={styles.loadingOverlay}>
@@ -131,7 +188,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlignVertical: 'top',
   },
-
   sendButton: {
     position: 'absolute',
     margin: 16,
@@ -154,6 +210,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  attachmentCard: {
+    padding: 16,
+    margin: 16,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    elevation: 4,
+    flexDirection: 'column',
+    alignItems: 'center',
   },
 });
 
