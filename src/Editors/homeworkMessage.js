@@ -14,16 +14,27 @@ import {
   useTheme,
   ProgressBar,
   Text,
+  Checkbox,
 } from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
-import {useGlobalSnackbar} from './mods/useGlobalSnackbar';
+import {useGlobalSnackbar} from '../mods/useGlobalSnackbar';
 import DocumentPicker from 'react-native-document-picker';
-import RNFS from 'react-native-fs';
+import {useDispatch, useSelector} from 'react-redux';
+import {onSendingMessage} from '../redux/Slices/WsController';
+import {template} from '@babel/core';
 
-const MessageEditorScreen = () => {
+const HomeworkMessageEditor = ({route}) => {
+  const dispatch = useDispatch();
   const theme = useTheme();
+
+  const [ifDialogChecked, setIfDialogChecked] = useState(false);
   const [message, setMessage] = useState('');
-  const [attachment, setAttachment] = useState(null);
+  const [attachments, setAttachments] = useState([]);
+  const [attachment, setAttachment] = useState({});
+  const [title, setTitle] = useState('');
+
+  const userName = useSelector(state => state.UserStateController.username);
+
   const [isSending, setIsSending] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -35,10 +46,10 @@ const MessageEditorScreen = () => {
       const result = await DocumentPicker.pick({
         type: [DocumentPicker.types.allFiles],
       });
+      setAttachment(result);
 
       console.log(result);
 
-      setAttachment(result);
       uploadFile(result);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -68,9 +79,23 @@ const MessageEditorScreen = () => {
         xhr.upload.onprogress = function (ev) {
           var process = ((100 * ev.loaded) / ev.total).toFixed(2);
           console.log('进度：' + process + '%');
-          setUploadProgress(Number(process))
+          setUploadProgress(Number(process));
           if (process == 100) {
             Alert.alert('上传成功', '文件已成功上传');
+          }
+        };
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            var responseData = xhr.responseText;
+            console.log('Response:', responseData);
+            let temp = [] || attachments;
+            temp.push({
+              filename: fileObj[0].name,
+              url: 'http://106.53.58.190:8900/download/' + responseData,
+            });
+            setAttachments(temp);
+          } else if (xhr.readyState === 4) {
+            console.error('Error:', xhr.status);
           }
         };
         xhr.send(form);
@@ -99,13 +124,32 @@ const MessageEditorScreen = () => {
 
       // Perform the sending logic here
       console.log('Sending message:', message);
-      if (attachment) {
-        console.log('Attached file:', attachment);
+      if (attachments) {
+        console.log('Attached file:', attachments);
       }
 
       // Reset message and attachment after sending
       setMessage('');
-      setAttachment(null);
+      setAttachments([]);
+      route.params.users.forEach(user => {
+        dispatch(
+          onSendingMessage({
+            command: 'sendMessage',
+            content: {
+              recipient: user.userId,
+              type: 'homeworkMessage',
+              data: {
+                id: Date.now(),
+                subject: title,
+                sender: userName,
+                content: message,
+                time: Date.now(),
+                attachments: attachments,
+              },
+            },
+          }),
+        );
+      });
 
       // Navigate back to the previous screen
       Alert.prompt('信息发送成功！');
@@ -123,9 +167,15 @@ const MessageEditorScreen = () => {
       <View style={styles.container}>
         <View style={styles.editorContainer}>
           <TextInput
+            style={styles.titleInput}
+            placeholder="作业科目"
+            value={title}
+            onChangeText={text => setTitle(text)}
+          />
+          <TextInput
             style={styles.input}
             multiline
-            placeholder="在此输入消息..."
+            placeholder="作业内容..."
             value={message}
             onChangeText={text => setMessage(text)}
           />
@@ -146,15 +196,15 @@ const MessageEditorScreen = () => {
           </ToggleButton.Row>
         </View>
 
-        {attachment && (
-          <View style={styles.attachmentCard}>
-            <Text>{attachment.name}</Text>
-            <ProgressBar
-              progress={uploadProgress / 100}
-              color={theme.colors.primary}
-            />
-          </View>
-        )}
+        {/*{attachment && (*/}
+        {/*  <View style={styles.attachmentCard}>*/}
+        {/*    <Text>{attachment.name}</Text>*/}
+        {/*    <ProgressBar*/}
+        {/*      progress={uploadProgress / 100}*/}
+        {/*      color={theme.colors.primary}*/}
+        {/*    />*/}
+        {/*  </View>*/}
+        {/*)}*/}
 
         {isSending && (
           <View style={styles.loadingOverlay}>
@@ -176,6 +226,12 @@ const MessageEditorScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    margin: 15,
+  },
   container: {
     flex: 1,
   },
@@ -220,6 +276,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
   },
+  titleInput: {
+    fontSize: 24, // Adjust the font size as needed
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
 });
 
-export default MessageEditorScreen;
+export default HomeworkMessageEditor;

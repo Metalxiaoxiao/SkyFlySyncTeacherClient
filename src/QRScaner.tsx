@@ -1,13 +1,22 @@
 import * as React from 'react';
 import {useCallback, useRef, useState} from 'react';
-import { Alert, AlertButton, Animated, Linking, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  AlertButton,
+  Animated,
+  Linking,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {
   Code,
-  useCameraDevice, useCameraPermission,
-  useCodeScanner
-} from "react-native-vision-camera";
+  useCameraDevice,
+  useCameraPermission,
+  useCodeScanner,
+} from 'react-native-vision-camera';
 import {Camera} from 'react-native-vision-camera';
 import {useIsFocused} from '@react-navigation/core';
+import naviagte from './mods/RootNavigation';
 
 const showCodeAlert = (value: string, onDismissed: () => void): void => {
   const buttons: AlertButton[] = [
@@ -26,12 +35,23 @@ const showCodeAlert = (value: string, onDismissed: () => void): void => {
       },
     });
   }
-  Alert.alert('Scanned Code', value, buttons);
+  let user;
+  if (value.startsWith('{')) {
+    user = JSON.parse(value);
+    if (user.userId) {
+      naviagte.navigate('AddClassPage', user);
+    }else{
+      Alert.alert('识别结果：', value, buttons);
+    }
+  }else{
+    Alert.alert('识别结果：', value, buttons);
+  }
+
 };
 
 export default function QRScanner(): React.ReactElement {
-  const { hasPermission, requestPermission } = useCameraPermission()
-  if (!hasPermission){
+  const {hasPermission, requestPermission} = useCameraPermission();
+  if (!hasPermission) {
     requestPermission();
   }
   const device = useCameraDevice('back');

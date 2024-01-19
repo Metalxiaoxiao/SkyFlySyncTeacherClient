@@ -104,7 +104,7 @@ const LoginArea = () => {
               command: 'login',
               content: {
                 userId: Number(account),
-                password: password,
+                userPassword: password,
                 deviceType: 0,
               },
             };

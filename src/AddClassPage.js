@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from "react";
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {
   TextInput,
@@ -17,10 +17,14 @@ import {
 } from './redux/Slices/WsController';
 import {displayLoginFaildAlert} from './redux/Slices/UserStateController';
 
-const AddClassPage = () => {
+const AddClassPage = ({ route }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const [classCode, setClassCode] = useState('');
+  useEffect(()=>{
+    route.params?
+    setClassCode(String(route.params.userId)):null;
+  },[])
 
   const styles = StyleSheet.create({
     container: {
@@ -44,6 +48,7 @@ const AddClassPage = () => {
   };
 
   const handleAddClass = () => {
+
     console.log('添加的班级代码:', classCode);
     dispatch(
       onSendingMessage({

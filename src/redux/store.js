@@ -70,7 +70,7 @@ WsListener.startListening({
             listenerApi.dispatch(
               onSendingMessage({
                 command: 'getTeachingClasses',
-                content:{},
+                content: {},
               }),
             );
             //请求班级信息

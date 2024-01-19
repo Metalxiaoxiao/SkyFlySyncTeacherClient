@@ -43,7 +43,7 @@ const HomeScreen = () => {
       x: 0,
       y: 0,
     });
-
+    const [selectedClass,setSelectedClass] = useState();
     return (
       <>
         <Surface
@@ -51,6 +51,7 @@ const HomeScreen = () => {
           <TouchableRipple
             onPress={() => handleWhiteboardPress(item)}
             onLongPress={evt => {
+              setSelectedClass(item);
               settouchEvt({
                 x: evt.nativeEvent.locationX,
                 y: evt.nativeEvent.locationY + 40,
@@ -94,7 +95,7 @@ const HomeScreen = () => {
           anchor={touchEvt}>
           <Menu.Item onPress={() => {}} title="属性" />
           <Divider />
-          <Menu.Item onPress={() => {}} title="设置日程" />
+          <Menu.Item onPress={() => {naviagte.navigate('classUpdateMessage',selectedClass.userId)}} title="设置日程" />
         </Menu>
       </>
     );
@@ -178,7 +179,7 @@ const HomeScreen = () => {
                 onPress: () => {
                   showCheckbox(true);
                   naviagte.navigate('SelectClassPage', {
-                    messageType: 'controlMessage',
+                    messageType: 'remoteExecuteMessage',
                   });
                 },
               },
@@ -188,7 +189,7 @@ const HomeScreen = () => {
                 onPress: () => {
                   showCheckbox(true);
                   naviagte.navigate('SelectClassPage', {
-                    messageType: 'timerMessage',
+                    messageType: 'timerTaskMessage',
                   });
                 },
               },

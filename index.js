@@ -22,16 +22,15 @@ import {navigationRef} from './src/mods/RootNavigation';
 import {GlobalSnackbarProvider} from './src/mods/useGlobalSnackbar';
 import UserDataDisplayTitleBar from './src/coms/UserDataDisplayTitleBar';
 import MainMenu from './src/coms/MainMenu';
-import MessageEditerScreen from './src/MessageEditerScreen.js';
 import SettingsScreen from './src/SettingsScreen';
 import QRScaner from './src/QRScaner';
 import AddClassPage from './src/AddClassPage';
 import SelectClassPage from './src/SelectClassPage';
+import OrdinaryMessage from './src/Editors/ordinaryMessage.js';
 
-// import SearchFriend from './src/SearchFriendPage';
-// import QRScaner from './src/QRScaner';
-// import ChatPage from './src/ChatPage';
-
+import DailyScheduleEditor from "./src/Editors/classUpdateMessage";
+import HomeworkMessageEditor from "./src/Editors/homeworkMessage";
+import RemoteCommandEditor from "./src/Editors/remoteExecuteMessage";
 store.dispatch((dispatch, getstate, api) => {
   connect(dispatch, getstate, api); //链接ws
 });
@@ -136,13 +135,6 @@ export default function Main() {
               options={{title: '设置'}}
             />
             <Stack.Screen
-              name="MessageEditerPage"
-              component={MessageEditerScreen}
-              options={{
-                title: '编辑信息',
-              }}
-            />
-            <Stack.Screen
               name="QRScanPage"
               component={QRScaner}
               options={{
@@ -159,7 +151,55 @@ export default function Main() {
               component={SelectClassPage}
               options={{title: '选择班级'}}
             />
-            
+            <Stack.Screen
+              name="ordinaryMessage"
+              component={OrdinaryMessage}
+              options={{
+                title: '编辑信息',
+              }}
+            />
+            <Stack.Screen
+              name="classUpdateMessage"
+              component={DailyScheduleEditor}
+              options={{
+                title: '编辑日程',
+              }}
+            />
+            <Stack.Screen
+              name="homeworkMessage"
+              component={HomeworkMessageEditor}
+              options={{
+                title: '布置作业',
+              }}
+            />
+            <Stack.Screen
+              name="remoteExecuteMessage"
+              component={RemoteCommandEditor}
+              options={{
+                title: '远程控制',
+              }}
+            />
+            {/*<Stack.Screen*/}
+            {/*  name="timerTaskMessage"*/}
+            {/*  component={OrdinaryMessage}*/}
+            {/*  options={{*/}
+            {/*    title: '设置定时任务',*/}
+            {/*  }}*/}
+            {/*/>*/}
+            {/*<Stack.Screen*/}
+            {/*  name="homeworkMessage"*/}
+            {/*  component={OrdinaryMessage}*/}
+            {/*  options={{*/}
+            {/*    title: '布置作业',*/}
+            {/*  }}*/}
+            {/*/>*/}
+            {/*<Stack.Screen*/}
+            {/*  name="fileMessage"*/}
+            {/*  component={fileMessage}*/}
+            {/*  options={{*/}
+            {/*    title: '传输文件',*/}
+            {/*  }}*/}
+            {/*/>*/}
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
