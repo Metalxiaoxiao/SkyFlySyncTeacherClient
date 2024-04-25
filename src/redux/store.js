@@ -100,12 +100,19 @@ WsListener.startListening({
         });
         break;
       case 'getOnlineUser':
-        if (action.payload.content.userId) {
+        if(action.payload.status == 'success'){
+          if (action.payload.content.userId) {
           let list = listenerApi.getState().UserStateController.ClassesListData;
-          if (!list.some(element => element.userId === action.payload.content.userId)) {
+          if (
+            !list.some(
+              element => element.userId === action.payload.content.userId,
+            )
+          ) {
             listenerApi.dispatch(onLookUpClass(action.payload.content));
           }
         }
+        }
+        
         break;
     }
   },
@@ -137,6 +144,8 @@ WsListener.startListening({
     });
   },
 });
+
+
 
 export default configureStore({
   reducer: {

@@ -88,7 +88,7 @@ const ordinaryMessage = ({route}) => {
             setAttachments(
               attachments.push({
                 filename: fileObj.name,
-                url: 'http://106.53.58.190:8900/download/' + responseData,
+                hashValue: responseData,
               }),
             );
           } else if (xhr.readyState === 4) {

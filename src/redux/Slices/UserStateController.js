@@ -32,6 +32,9 @@ export const UserStateSlice = createSlice({
     onLoadClasses: (state, action) => {
       state.teachingClasses = action.payload;
     },
+    onLoadClass:(state,action)=>{
+      state.teachingClasses = [...state.teachingClasses,action];
+    },
     onLookUpClass: (state, action) => {
       state.lookupedlistdata.push(action.payload);
       state.teachingClasses.forEach(element => {
@@ -56,6 +59,7 @@ export const {
   displayLoginRequestingCircle,
   onLoadClasses,
   onLookUpClass,
+  onLoadClass,
 } = UserStateSlice.actions;
 
 export default UserStateSlice.reducer;

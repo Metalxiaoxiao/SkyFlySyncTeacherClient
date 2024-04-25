@@ -170,8 +170,7 @@ const RemoteCommandEditor = ({route}) => {
           />
         </View>
 
-        <View style={styles.toolbar}>
-        </View>
+        <View style={styles.toolbar}></View>
 
         {/*{attachment && (*/}
         {/*  <View style={styles.attachmentCard}>*/}

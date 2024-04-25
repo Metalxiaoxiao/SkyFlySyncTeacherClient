@@ -15,7 +15,7 @@ import {
   onReceivedMessage,
   onSendingMessage,
 } from './redux/Slices/WsController';
-import {displayLoginFaildAlert} from './redux/Slices/UserStateController';
+import {displayLoginFaildAlert, onLoadClass, onLoadClasses} from './redux/Slices/UserStateController';
 
 const AddClassPage = ({ route }) => {
   const dispatch = useDispatch();
@@ -46,11 +46,17 @@ const AddClassPage = ({ route }) => {
   const handleInputChange = text => {
     setClassCode(text);
   };
-
+  const classes = useSelector(state => state.UserStateController.ClassesListData);
   const handleAddClass = () => {
-
+    let send = true;
+    classes.forEach(element => {
+      if (element == classCode){
+        send = false;
+      }
+    });
     console.log('添加的班级代码:', classCode);
-    dispatch(
+    if(send){
+      dispatch(
       onSendingMessage({
         command: 'addClass',
         content: {
@@ -58,13 +64,16 @@ const AddClassPage = ({ route }) => {
         },
       }),
     );
+    }
+    
   };
   const [isAlertVisible, displayAlert] = useState(false);
   const message = useSelector(state => state.WsController.receivedMessage);
   if (message !== null && isAlertVisible === false) {
-    message.command === 'addClass' && message.status === 'success'
-      ? displayAlert(true)
-      : null;
+    if(message.command === 'addClass' && message.status === 'success'){
+      displayAlert(true)
+      dispatch(onLoadClass(classCode))
+    }
   }
   return (
     <View style={styles.container}>

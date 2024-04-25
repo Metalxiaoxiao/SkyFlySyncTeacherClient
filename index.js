@@ -28,9 +28,9 @@ import AddClassPage from './src/AddClassPage';
 import SelectClassPage from './src/SelectClassPage';
 import OrdinaryMessage from './src/Editors/ordinaryMessage.js';
 
-import DailyScheduleEditor from "./src/Editors/classUpdateMessage";
-import HomeworkMessageEditor from "./src/Editors/homeworkMessage";
-import RemoteCommandEditor from "./src/Editors/remoteExecuteMessage";
+import DailyScheduleEditor from './src/Editors/classUpdateMessage';
+import HomeworkMessageEditor from './src/Editors/homeworkMessage';
+import RemoteCommandEditor from './src/Editors/remoteExecuteMessage';
 store.dispatch((dispatch, getstate, api) => {
   connect(dispatch, getstate, api); //链接ws
 });

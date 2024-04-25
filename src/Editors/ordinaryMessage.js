@@ -91,7 +91,7 @@ const OrdinaryMessage = ({route}) => {
             let temp = [] || attachments;
             temp.push({
               filename: fileObj[0].name,
-              url: 'http://106.53.58.190:8900/download/' + responseData,
+              hashValue: responseData,
             });
             setAttachments(temp);
           } else if (xhr.readyState === 4) {
@@ -190,6 +190,9 @@ const OrdinaryMessage = ({route}) => {
         </View>
 
         <View style={styles.toolbar}>
+          {uploadProgress == 0 ? (
+            <ProgressBar progress={uploadProgress} />
+          ) : null}
           <ToggleButton.Row
             onValueChange={value => {
               if (value === 'attach') {

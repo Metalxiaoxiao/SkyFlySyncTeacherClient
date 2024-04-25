@@ -15,19 +15,55 @@ import {onSendingMessage} from '../redux/Slices/WsController';
 const DailyScheduleEditor = ({route}) => {
   useEffect(() => {
     StorageUtil.getItem('schedule' + new Date().getDay()).then(response => {
-      setDailySchedule(
+      
+      let responseChache = null;
+      try{
+        responseChache = response[0].show;
+      }catch{
+        
+      }
+      if(! responseChache){
+        setDailySchedule(
+          [
+            { turn: 1, time: '07:40', subject: '语文', show: true },
+            { turn: 2, time: '08:30', subject: '英语', show: true },
+            { turn: 3, time: '09:20', subject: '数学', show: true },
+            { turn: 4, time: '10:00', subject: '大课间', show: false },
+            { turn: 5, time: '10:30', subject: '自习', show: true },
+            { turn: 6, time: '11:20', subject: '数学', show: true },
+            { turn: 7, time: '13:15', subject: '午休', show: false },
+            { turn: 8, time: '14:30', subject: '政治', show: true },
+            { turn: 9, time: '15:20', subject: '物理', show: true },
+            { turn: 10, time: '16:10', subject: '自习', show: true },
+            { turn: 11, time: '16:50', subject: '大课间', show: false },
+            { turn: 12, time: '17:20', subject: '化学', show: true },
+            { turn: 13, time: '19:30', subject: '自习', show: true },
+            { turn: 14, time: '20:10', subject: '自习', show: true },
+            { turn: 15, time: '21:10', subject: '自习', show: true },
+          ],
+        );
+      }else{
+        setDailySchedule(
         response || [
-          {turn: 1, subject: '', time: '07:40'},
-          {turn: 2, subject: '', time: '08:30'},
-          {turn: 3, subject: '', time: '09:20'},
-          {turn: 4, subject: '', time: '10:30'},
-          {turn: 5, subject: '', time: '11:20'},
-          {turn: 6, subject: '', time: '14:40'},
-          {turn: 7, subject: '', time: '15:30'},
-          {turn: 8, subject: '', time: '16:20'},
-          {turn: 9, subject: '', time: '17:10'},
+          { turn: 1, time: '07:40', subject: '语文', show: true },
+          { turn: 2, time: '08:30', subject: '英语', show: true },
+          { turn: 3, time: '09:20', subject: '数学', show: true },
+          { turn: 4, time: '10:00', subject: '大课间', show: false },
+          { turn: 5, time: '10:30', subject: '自习', show: true },
+          { turn: 6, time: '11:20', subject: '数学', show: true },
+          { turn: 7, time: '13:15', subject: '午休', show: false },
+          { turn: 8, time: '14:30', subject: '政治', show: true },
+          { turn: 9, time: '15:20', subject: '物理', show: true },
+          { turn: 10, time: '16:10', subject: '自习', show: true },
+          { turn: 11, time: '16:50', subject: '大课间', show: false },
+          { turn: 12, time: '17:20', subject: '化学', show: true },
+          { turn: 13, time: '19:30', subject: '自习', show: true },
+          { turn: 14, time: '20:10', subject: '自习', show: true },
+          { turn: 15, time: '21:10', subject: '自习', show: true },
         ],
       );
+      }
+      
     });
   }, []);
   const [selectedDay, setSelectedDay] = useState('Monday'); // 添加选中的一周的哪一天
@@ -77,7 +113,7 @@ const DailyScheduleEditor = ({route}) => {
   const handleSubjectChange = (turn, text) => {
     setDailySchedule(prevSchedule =>
       prevSchedule.map(item =>
-        item.turn === turn ? {...item, subject: text} : item,
+        item.turn === turn ? {...item, subject: text ,show:true,} : item,
       ),
     );
   };

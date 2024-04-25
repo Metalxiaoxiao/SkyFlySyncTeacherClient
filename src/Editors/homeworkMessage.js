@@ -32,7 +32,7 @@ const HomeworkMessageEditor = ({route}) => {
   const [attachments, setAttachments] = useState([]);
   const [attachment, setAttachment] = useState({});
   const [title, setTitle] = useState('');
-
+  const [endTime, setEndTime] = useState('');
   const userName = useSelector(state => state.UserStateController.username);
 
   const [isSending, setIsSending] = useState(false);
@@ -91,7 +91,7 @@ const HomeworkMessageEditor = ({route}) => {
             let temp = [] || attachments;
             temp.push({
               filename: fileObj[0].name,
-              url: 'http://106.53.58.190:8900/download/' + responseData,
+              hashValue: responseData,
             });
             setAttachments(temp);
           } else if (xhr.readyState === 4) {
@@ -131,8 +131,24 @@ const HomeworkMessageEditor = ({route}) => {
       // Reset message and attachment after sending
       setMessage('');
       setAttachments([]);
-      route.params.users.forEach(user => {
+      route.params.users.forEach(user => {console.log({
+        command: 'sendMessage',
+        content: {
+          recipient: user.userId,
+          type: 'homeworkMessage',
+          data: {
+            id: Date.now(),
+            subject: title,
+            sender: userName,
+            show:true,
+            content: message,
+            time: Date.now(),
+            day: new Date().getDay(),
+            endTime: endTime,
+            attachments: attachments,
+          }}})
         dispatch(
+          
           onSendingMessage({
             command: 'sendMessage',
             content: {
@@ -143,7 +159,10 @@ const HomeworkMessageEditor = ({route}) => {
                 subject: title,
                 sender: userName,
                 content: message,
+                show:true,
                 time: Date.now(),
+                day: new Date().getDay(),
+                endTime: endTime,
                 attachments: attachments,
               },
             },
@@ -178,6 +197,14 @@ const HomeworkMessageEditor = ({route}) => {
             placeholder="作业内容..."
             value={message}
             onChangeText={text => setMessage(text)}
+          />
+
+          <TextInput
+            style={styles.input}
+            multiline
+            placeholder="截止时间"
+            value={endTime}
+            onChangeText={endTime => setEndTime(endTime)}
           />
         </View>
 
