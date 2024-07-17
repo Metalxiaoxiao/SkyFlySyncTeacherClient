@@ -25,95 +25,99 @@ const WsListener = createListenerMiddleware();
 WsListener.startListening({
   actionCreator: onReceivedMessage,
   effect: (action, listenerApi) => {
-    switch (action.payload.command) {
-      case 'message':
-        // initDB(action.payload.data.user);
-        var storeMessage = {
-          text: action.payload.data.body.text,
-          sent: false,
-        };
-        var data = {
-          MESSAGE: JSON.stringify(storeMessage),
-          TIME: Date.now(),
-        };
-        // insertDataToTable(
-        //   DB_Config.tables.MsgDataTable,
-        //   data,
-        //   (success, err) => {
-        //     if (success) {
-        //       console.log('Message inserted successfully');
-        //     } else {
-        //       console.log('Error inserting message:', err);
-        //     }
-        //   },
-        // );
+    //登录
+    if (!listenerApi.getState().UserStateController.IsLogined) {
 
-        break;
-      case 'login':
-        setTimeout(() => {
-          listenerApi.dispatch(displayLoginRequestingCircle(false));
-          if (action.payload.status === 'success') {
-            //解除loading状态
-            if (listenerApi.getState().UserStateController.IsLogined) {
-            } else {
-              listenerApi.dispatch(onLogin(action.payload.content));
-              naviagte.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: 'IndexPage',
-                  },
-                ],
-              });
-              StorageUtil.setItem('LoginState', 'logined');
-            }
-            listenerApi.dispatch(
+      setTimeout(() => {
+        listenerApi.dispatch(displayLoginRequestingCircle(false));
+
+        if (action.payload.state === true) {
+          let interval  =  setInterval(() => {
+    
+            dispatch(
               onSendingMessage({
-                command: 'getTeachingClasses',
-                content: {},
+                command: 'heart',
+                content: {
+                  timeStamp: Date.now(),
+                },
               }),
             );
-            //请求班级信息
-            // Image.prefetch(action.payload.img); //缓存图片
-          } else {
-            listenerApi.dispatch(displayLoginFaildAlert(true));
-          }
-        }, 1000);
-        break;
-      case 'getTeachingClasses':
-        if (action.payload.teachingClass == null) {
-          data = [];
+          }, 3000);
+          //开始发送心跳包
+          //解除loading状态
+            listenerApi.dispatch(onLogin(action.payload.userData));
+            naviagte.reset({
+              index: 0,
+              routes: [
+                {
+                  name: 'IndexPage',
+                },
+              ],
+            });
+            //页面重定向
+            StorageUtil.setItem('LoginState', 'logined');
+
+            listenerApi.dispatch(onLoadClasses(action.payload.userData.checkUserOnlineState));
+            data.forEach(element => {
+              console.log(element);
+              listenerApi.dispatch(
+                onSendingMessage({
+                  command: 'checkUserOnlineState',
+                  content: {
+                    userId: Number(element),
+                  },
+                }),
+              );
+            });
+          //请求班级在线状态
+          // Image.prefetch(action.payload.img); //缓存图片
         } else {
-          data = JSON.parse(action.payload.teachingClass);
+          listenerApi.dispatch(displayLoginFaildAlert(true));
         }
-        listenerApi.dispatch(onLoadClasses(data));
-        data.forEach(element => {
-          console.log(element);
-          listenerApi.dispatch(
-            onSendingMessage({
-              command: 'getOnlineUser',
-              content: {
-                userId: Number(element),
-              },
-            }),
-          );
-        });
-        break;
-      case 'getOnlineUser':
-        if(action.payload.status == 'success'){
-          if (action.payload.content.userId) {
-          let list = listenerApi.getState().UserStateController.ClassesListData;
-          if (
-            !list.some(
-              element => element.userId === action.payload.content.userId,
-            )
-          ) {
-            listenerApi.dispatch(onLookUpClass(action.payload.content));
+      }, 1000);
+
+
+    }else{
+      switch (action.payload.command) {
+        case 'message':
+          // initDB(action.payload.data.user);
+          var storeMessage = {
+            text: action.payload.data.body.text,
+            sent: false,
+          };
+          var data = {
+            MESSAGE: JSON.stringify(storeMessage),
+            TIME: Date.now(),
+          };
+          // insertDataToTable(
+          //   DB_Config.tables.MsgDataTable,
+          //   data,
+          //   (success, err) => {
+          //     if (success) {
+          //       console.log('Message inserted successfully');
+          //     } else {
+          //       console.log('Error inserting message:', err);
+          //     }
+          //   },
+          // );
+  
+          break;
+        case 'checkUserOnlineState':
+          if(action.payload.status == 'success'){
+            if (action.payload.content.userId) {
+            let list = listenerApi.getState().UserStateController.ClassesListData;
+            if (
+              !list.some(
+                element => element.userId === action.payload.content.userId,
+              )
+            ) {
+              listenerApi.dispatch(onLookUpClass(action.payload.content));
+            }
           }
-        }
-        }
-        
-        break;
+          }
+          
+          break;
+      }
     }
   },
 });

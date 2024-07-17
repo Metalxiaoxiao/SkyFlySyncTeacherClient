@@ -100,14 +100,11 @@ const LoginArea = () => {
           mode="contained"
           onPress={() => {
             dispatch(displayLoginRequestingCircle(true));
-            var data = {
-              command: 'login',
-              content: {
+            var data = 
+              {
                 userId: Number(account),
-                userPassword: password,
-                deviceType: 0,
-              },
-            };
+                password: password,
+              }
             StorageUtil.setItem('userLoginData', data);
             dispatch(onSendingMessage(data));
           }}>
